@@ -72,14 +72,19 @@ class Worm extends React.Component {
             const chartData = new ChartData(formattedRows, columns);
             const previousMatchups = Object.keys(this.state.results)
                 .map(key => {
-                    return <li key={key} onClick={() => this.setState({matchupToShow: key})}>{key}</li>
+                    return <li key={key} onClick={() => this.setState({matchupToShow: key})}>{key.split(',').join(' vs ')}</li>
                 });
 
-            const xMax = this.state.matchupToShow === this.state.currentMatchup
+
+            const xMax = !this.state.matchupToShow || this.state.matchupToShow === this.state.currentMatchup
                 ? new Date(this.state.currentEndTime)
                 : chartData.max('time');
 
             return <div>
+                    <div className={'Stats'}>
+                        <div className={'Stats_emoji'} style={{fontSize: 50}}>{first}</div>
+                        <div className={'Stats_score'} style={{fontSize: 50}}>{latestFirst}</div>
+                    </div>
                 <Chart
                     data={chartData}
                     xColumn={'time'}
@@ -90,19 +95,23 @@ class Worm extends React.Component {
                     padding={[80,80,80,80]}
                     height={720}
                 >
-                    <text x={500} fontSize={50}>{first}</text>
-                    <text x={600} fontSize={50}>{latestFirst}</text>
-                    <text x={500} y={600} fontSize={50}>{second}</text>
-                    <text x={600} y={600} fontSize={50}>{latestSecond}</text>
                     <Axis dimension={'y'}/>
                     <Benchmark location={(latestFirst + latestSecond) / 2}/>
                     <Benchmark location={xMax} dimension={'x'}/>
                     <Line/>
                 </Chart>
-                <div>Previous matchups</div>
-                <ul>
-                    {previousMatchups}
-                </ul>
+
+                <div className={'Stats'}>
+                    <div className={'Stats_emoji'} style={{fontSize: 50}}>{second}</div>
+                    <div className={'Stats_score'} style={{fontSize: 50}}>{latestSecond}</div>
+                </div>
+
+                <div className="Switcher">
+                    <div className="Switcher_title">Previous matchups</div>
+                    <ul>
+                        {previousMatchups}
+                    </ul>
+                </div>
 
             </div>;
 
